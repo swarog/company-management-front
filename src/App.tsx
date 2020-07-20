@@ -1,25 +1,25 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {Admin, fetchUtils} from 'react-admin';
+import simpleRestProvider from 'ra-data-simple-rest';
+import authProvider from "./authProvider";
+
+const httpClient = (url: string, options: any = {}) => {
+    if (!options.headers) {
+        options.headers = new Headers({ Accept: 'application/json' });
+    }
+    const token = localStorage.getItem('token');
+    if (token) {
+        options.headers.set('Authorization', `Bearer ${token}`);
+    }
+    return fetchUtils.fetchJson(url, options);
+}
+const dataProvider = simpleRestProvider("/api", httpClient);
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Admin authProvider={authProvider} dataProvider={simpleRestProvider('/api')}>
+        <div>test</div>
+    </Admin>
   );
 }
 
